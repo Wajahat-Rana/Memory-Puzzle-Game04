@@ -15,6 +15,10 @@ public class GetPuzzleButtons : MonoBehaviour
     private bool firstClick, secondClick;
     private int firstClickIndex, secondClickIndex;
     private string firstClickName, secondClickName;
+
+    private int RequiredCorrectGuesses;
+    private int currentCorrectGuesses;
+    private int countGuesses;
     void Awake()
     {
         puzzleSprites = Resources.LoadAll<Sprite>("Sprites/PuzzleSprites");
@@ -24,6 +28,8 @@ public class GetPuzzleButtons : MonoBehaviour
         getButtons();
         AddListener();
         AddGamePuzzleSprites();
+        RequiredCorrectGuesses = puzzleButtons.Count / 2;
+        shufflePuzzle(gamePuzzleSprites);
     }
     void getButtons()
     {
@@ -66,20 +72,62 @@ public class GetPuzzleButtons : MonoBehaviour
             firstClickName = gamePuzzleSprites[firstClickIndex].name;
             puzzleButtons[firstClickIndex].image.sprite = gamePuzzleSprites[firstClickIndex];
         }
-        else if (!secondClick){
+        else if (!secondClick)
+        {
             secondClick = true;
             secondClickIndex = int.Parse(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
             secondClickName = gamePuzzleSprites[secondClickIndex].name;
             puzzleButtons[secondClickIndex].image.sprite = gamePuzzleSprites[secondClickIndex];
-            if (firstClickName == secondClickName)
-            {
-                Debug.Log("Matched");
-            }
-            else{
-                Debug.Log("Not Matched");
-            }
+
+            StartCoroutine(checkIfPuzzlesMatch());
+            countGuesses++;
         }
 
+    }
+    IEnumerator checkIfPuzzlesMatch()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        if (firstClickName == secondClickName)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            puzzleButtons[firstClickIndex].interactable = false;
+            puzzleButtons[secondClickIndex].interactable = false;
+
+            puzzleButtons[firstClickIndex].image.color = new Color (0,0,0,0);
+            puzzleButtons[secondClickIndex].image.color = new Color (0,0,0,0);
+
+            checkIfGameIsFinished();
+        }
+        else{
+        puzzleButtons[firstClickIndex].image.sprite = puzzleButtonImage;
+        puzzleButtons[secondClickIndex].image.sprite = puzzleButtonImage;
+        }
+        yield return new WaitForSeconds(0.5f);
+
+        firstClick = secondClick = false;
+
+    }
+
+    void checkIfGameIsFinished()
+    {
+        currentCorrectGuesses++;
+        if(currentCorrectGuesses == RequiredCorrectGuesses){
+            Debug.Log("Game is Finished");
+            Debug.Log("It took you " + countGuesses + " guesses ('-')");
+        }
+    }
+
+    void shufflePuzzle(List<Sprite> list){
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            Sprite temp = list[i];
+            int randomIndex = Random.Range(i, list.Count);
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
     }
 
 

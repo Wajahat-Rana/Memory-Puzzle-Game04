@@ -12,6 +12,9 @@ public class GetPuzzleButtons : MonoBehaviour
     public Sprite[] puzzleSprites;
     public List<Sprite> gamePuzzleSprites = new List<Sprite>();
 
+    private bool firstClick, secondClick;
+    private int firstClickIndex, secondClickIndex;
+    private string firstClickName, secondClickName;
     void Awake()
     {
         puzzleSprites = Resources.LoadAll<Sprite>("Sprites/PuzzleSprites");
@@ -55,8 +58,28 @@ public class GetPuzzleButtons : MonoBehaviour
     }
     void PuzzleButtonClicked()
     {
-        string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-        Debug.Log("Puzzled Button Clicked : " + name);
+
+        if (!firstClick)
+        {
+            firstClick = true;
+            firstClickIndex = int.Parse(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
+            firstClickName = gamePuzzleSprites[firstClickIndex].name;
+            puzzleButtons[firstClickIndex].image.sprite = gamePuzzleSprites[firstClickIndex];
+        }
+        else if (!secondClick){
+            secondClick = true;
+            secondClickIndex = int.Parse(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
+            secondClickName = gamePuzzleSprites[secondClickIndex].name;
+            puzzleButtons[secondClickIndex].image.sprite = gamePuzzleSprites[secondClickIndex];
+            if (firstClickName == secondClickName)
+            {
+                Debug.Log("Matched");
+            }
+            else{
+                Debug.Log("Not Matched");
+            }
+        }
+
     }
 
 

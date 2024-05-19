@@ -12,6 +12,7 @@ public class GetPuzzleButtons : MonoBehaviour
     void Start()
     {
         getButtons();
+        AddListener();
     }
     void getButtons()
     {
@@ -21,6 +22,15 @@ public class GetPuzzleButtons : MonoBehaviour
             puzzleButtons.Add(btns[i].GetComponent<Button>());
             puzzleButtons[i].image.sprite = puzzleButtonImage;
         }
+    }
+    void AddListener(){
+        foreach(Button btn in puzzleButtons){
+            btn.onClick.AddListener(PuzzleButtonClicked);
+        }
+    }
+    void PuzzleButtonClicked(){
+        string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
+        Debug.Log("Puzzled Button Clicked : " + name);
     }
 
 

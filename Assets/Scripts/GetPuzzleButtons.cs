@@ -9,10 +9,18 @@ public class GetPuzzleButtons : MonoBehaviour
 
     [SerializeField]
     private Sprite puzzleButtonImage;
+    public Sprite[] puzzleSprites;
+    public List<Sprite> gamePuzzleSprites = new List<Sprite>();
+
+    void Awake()
+    {
+        puzzleSprites = Resources.LoadAll<Sprite>("Sprites/PuzzleSprites");
+    }
     void Start()
     {
         getButtons();
         AddListener();
+        AddGamePuzzleSprites();
     }
     void getButtons()
     {
@@ -23,12 +31,30 @@ public class GetPuzzleButtons : MonoBehaviour
             puzzleButtons[i].image.sprite = puzzleButtonImage;
         }
     }
-    void AddListener(){
-        foreach(Button btn in puzzleButtons){
+
+    void AddGamePuzzleSprites()
+    {
+        int looper = puzzleButtons.Count;
+        int index = 0;
+        for (int i = 0; i < looper; i++)
+        {
+            if (index == looper / 2)
+            {
+                index = 0;
+            }
+            gamePuzzleSprites.Add(puzzleSprites[index]);
+            index++;
+        }
+    }
+    void AddListener()
+    {
+        foreach (Button btn in puzzleButtons)
+        {
             btn.onClick.AddListener(PuzzleButtonClicked);
         }
     }
-    void PuzzleButtonClicked(){
+    void PuzzleButtonClicked()
+    {
         string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
         Debug.Log("Puzzled Button Clicked : " + name);
     }
